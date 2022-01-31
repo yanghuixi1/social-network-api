@@ -64,7 +64,44 @@ module.exports = {
           { _id: req.body.userId },
           { $pull: { thoughts: thought._id } }
         );
-        res.status(200).json("Thought successfully deleted!");
+        if (user) {
+          res.status(200).json("Thought successfully deleted!");
+        } else {
+          res.status(404).json({ message: "No thought with that ID" });
+        }
+      } else {
+        res
+          .status(404)
+          .json({ message: "Thought deleted but no user with this ID" });
+      }
+    } catch (err) {
+      res.status(500).json(err);
+    }
+  },
+  async createThoughtReaction(req, res) {
+    try {
+      let thought = await Thought.findOneAndUpdate(
+        { _id: req.params.thoughtId },
+        { $addToSet: { reactions: req.body } },
+        { runValidators: true, new: true }
+      );
+      if (thought) {
+        res.status(201).json(thought);
+      } else {
+        res.status(404).json({ message: "No thought with that ID" });
+      }
+    } catch (err) {
+      res.status(500).json(err);
+    }
+  },
+  async removeThoughtReaction(req, res) {
+    try {
+      let thought = await Thought.findOneAndUpdate(
+        { _id: req.params.thoughtId },
+        { $pull: { reactions: { reactionId: req.body.reactionId } } }
+      );
+      if (thought) {
+        res.status(200).json("Thought removed successfully");
       } else {
         res.status(404).json({ message: "No thought with that ID" });
       }
