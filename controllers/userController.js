@@ -72,7 +72,13 @@ module.exports = {
           { $addToSet: { friends: req.params.userId } },
           { new: true }
         );
-        res.status(201).json(user);
+        if (friend) {
+          res.status(201).json(user);
+        } else {
+          res.status(404).json({
+            message: "Friend added, but found no user with the friend's ID",
+          });
+        }
       } else {
         res.status(404).json({ message: "No user with that ID" });
       }
@@ -92,7 +98,13 @@ module.exports = {
           { _id: req.params.friendId },
           { $pull: { friends: req.params.userId } }
         );
-        res.status(201).json(user);
+        if (friend) {
+          res.status(200).json("Friend removed successfully");
+        } else {
+          res.status(404).json({
+            message: "Friend removed, but found no user with the friend's ID",
+          });
+        }
       } else {
         res.status(404).json({ message: "No user with that ID" });
       }
