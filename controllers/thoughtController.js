@@ -61,18 +61,18 @@ module.exports = {
       });
       if (thought) {
         let user = await User.findOneAndUpdate(
-          { _id: req.body.userId },
+          { username: thought.username },
           { $pull: { thoughts: thought._id } }
         );
         if (user) {
           res.status(200).json("Thought successfully deleted!");
         } else {
-          res.status(404).json({ message: "No thought with that ID" });
+          res
+            .status(404)
+            .json({ message: "Thought deleted but no user with this ID" });
         }
       } else {
-        res
-          .status(404)
-          .json({ message: "Thought deleted but no user with this ID" });
+        res.status(404).json({ message: "No thought with that ID" });
       }
     } catch (err) {
       res.status(500).json(err);
@@ -101,7 +101,7 @@ module.exports = {
         { $pull: { reactions: { reactionId: req.body.reactionId } } }
       );
       if (thought) {
-        res.status(200).json("Thought removed successfully");
+        res.status(200).json("Reaction removed successfully");
       } else {
         res.status(404).json({ message: "No thought with that ID" });
       }
