@@ -18,6 +18,12 @@ const reactionSchema = new Schema(
     createdAt: {
       type: Date,
       default: Date.now,
+      get: (date) => {
+        let dateObj = new Date(date);
+        let dateString = dateObj.toDateString();
+        let timeString = dateObj.toTimeString();
+        return `${dateString} @ ${timeString}`;
+      },
     },
   },
   {
